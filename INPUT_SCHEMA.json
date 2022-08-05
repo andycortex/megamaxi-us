@@ -1,0 +1,37 @@
+{
+    "title": "CheerioCrawler Template",
+    "description": "This is an actor for scraping https://www.megamaxi.com/ site.\nRead carefully:\nField “Categories URLs” is intended to scrape all the products in one or more categories of the site. If you’re going to use this function, use only category URLs, don’t use keywords.\nField “Products URLs” is intended to scrape one or more products of the site. If you’re going to use this function, use only products URLs, don’t use keywords. \nField “Search Keyword” is intended to scrape products based on a keyword. If you’re going to use this function, use only keywords, don’t use URls.",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "categoriesUrls": {
+            "title": "Categories URLs",
+            "type": "array",
+            "description": "Categories URLs to start with.",
+            "editor": "requestListSources",
+            "prefill": []
+        },
+        "productsUrls": {
+            "title": "Products URLs",
+            "type": "array",
+            "description": "Products URLs to start with.",
+            "editor": "requestListSources",
+            "prefill": []
+        },
+        "keyword": {
+            "title": "Search Keyword",
+            "type": "string",
+            "description": "Keywords to search on the category or listingPages. Example plus striped or 'auto' if we want all of the products on the listingPages.",
+            "editor": "textfield",
+            "prefill": ""
+        },
+        "pages": {
+            "title": "Pages",
+            "type": "string",
+            "description": "Count of pages. Format is '1-10', single number (e.g. '10') or 'auto'",
+            "editor": "textfield",
+            "prefill": "0"
+        }
+    },
+    "required": ["pages"]
+}
