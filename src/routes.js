@@ -6,7 +6,7 @@ const {
     utils: { log },
 } = Apify;
 
-const BASE_URL = "https://www.zappos.com/";
+const BASE_URL = "https://www.megamaxi.com/ ";
 
 class ItemModel {
     constructor() {
@@ -131,141 +131,135 @@ exports.handleMainCategory = async ({ request, $ }) => {
 exports.handleSubCategory = async ({ request, $ }) => {};
 
 exports.handleDetail = async ({ request, $ }) => {
-    async function getItemOptionData($) {
-        let itemImages = [];
-        let itemSizes = [];
-        let itemOptionData = [];
-        let itemOptions = {};
+    // async function getItemOptionData($) {
+    //     let itemImages = [];
+    //     let itemSizes = [];
+    //     let itemOptionData = [];
+    //     let itemOptions = {};
 
-        let newItem = {};
+    //     let newItem = {};
 
-        let variations = $(".GL-z label img").toArray();
-        itemImages = variations.map((item) =>
-            $(item).attr("src").replace("144", "640")
-        );
+    //     let variations = $(".GL-z label img").toArray();
+    //     itemImages = variations.map((item) =>
+    //         $(item).attr("src").replace("144", "640")
+    //     );
 
-        let sizes = $(".ER-z label").toArray();
-        itemSizes = sizes.map((size) => $(size).text());
+    //     let sizes = $(".ER-z label").toArray();
+    //     itemSizes = sizes.map((size) => $(size).text());
 
-        newItem.images = itemImages;
-        // newItem.sizes = itemSizes;
+    //     newItem.images = itemImages;
+    //     // newItem.sizes = itemSizes;
 
-        itemOptionData.push(newItem);
+    //     itemOptionData.push(newItem);
 
-        let itemColor = $("div.vu-z label span").toArray();
-        options = itemColor.map((item) => $(item).text());
-        itemOptions.Color = options.join(",");
+    //     let itemColor = $("div.vu-z label span").toArray();
+    //     options = itemColor.map((item) => $(item).text());
+    //     itemOptions.Color = options.join(",");
 
-        return {
-            itemOptions,
-            itemOptionData,
-            itemImages,
-        };
-    }
+    //     return {
+    //         itemOptions,
+    //         itemOptionData,
+    //         itemImages,
+    //     };
+    // }
 
     async function getBrandTitle($) {
-        let brand = $("span.to-z").text().trim();
-        let title = `${brand} ${$("span.so-z span").text().trim()}`;
+        let brand = $("div.tab-content table tbody tr td p").text().trim();
+        let title = `${brand} ${$("h1").text().trim()}`;
         return {
             brand,
             title,
         };
     }
 
-    // async function getPrices($, itemOptionData) {
-    //     let salePrice = undefined;
-    //     let numFormatter = new Intl.NumberFormat("en-US", {
-    //         style: "currency",
-    //         currency: "USD",
-    //     });
-    //     if (itemOptionData.length) {
-    //         let prices = itemOptionData.map((item) => item.price);
-    //         salePrice = Math.max(...prices);
-    //         salePrice = numFormatter.format(salePrice);
-    //     } else {
-    //         salePrice = $("p.price ins").text();
-    //         if (!salePrice) {
-    //             salePrice = $("p.price bdi").text();
-    //         }
-    //     }
+    async function getPrices($) {
+        let salePrice = $(
+            "p.price del span[class*='woocommerce-Price-amount'] bdi"
+        )
+            .text()
+            .replace("$", "")
+            .trim();
 
-    //     let retailPrice = $("p.price > del > span > bdi").text();
-    //     retailPrice = retailPrice ? retailPrice : salePrice;
-    //     return { salePrice, retailPrice };
-    // }
+        let retailPrice = $("ins span[class*='woocommerce-Price-amount'] bdi")
+            .text()
+            .replace("$", "")
+            .trim();
+            
+        return { salePrice, retailPrice };
+    }
 
-    // async function getImages($) {
-    //     let standardImage = $(".woocommerce-product-gallery__image a img").attr(
-    //         "src"
-    //     );
-    //     let otherImages = standardImage;
+    async function getImages($) {
+        let standardImage = $(
+            "figure.woocommerce-product-gallery__wrapper div a img"
+        ).attr("src");
+        let otherImages = standardImage;
 
-    //     return { standardImage, otherImages };
-    // }
+        return { standardImage, otherImages };
+    }
 
-    // async function getDescription($) {
-    //     let description = $("#tab-description div.tab-content")
-    //         .html()
-    //         .replaceAll("\t", "")
-    //         .replaceAll("\n", "");
-    //     return { description };
-    // }
+    async function getDescription($) {
+        let description = $("#tab-description div.tab-content")
+            .html()
+            .replaceAll("\t", "")
+            .replaceAll("\n", "");
+        return { description };
+    }
 
-    // async function getCategory($) {
-    //     let categories = $("span.posted_in a").toArray();
-    //     categories = categories.map((item) => $(item).text().trim());
-    //     categories = categories.join(" > ");
-    //     return { categories };
-    // }
+    async function getCategory($) {
+        let categories = $("span.posted_in a").toArray();
+        categories = categories.map((item) => $(item).text().trim());
+        categories = categories.join(" > ");
+        return { categories };
+    }
 
-    // async function getItemCode($) {
-    //     let code = $(
-    //         "div[class='summary entry-summary'] span.custom-conditions:nth-last-child(3)"
-    //     )
-    //         .text()
-    //         .replace("SKU:", "")
-    //         .trim();
-    //     return { code };
-    // }
-    // async function getAvailability($) {
-    //     let prodAvailable = $(
-    //         "div[class='summary entry-summary'] span.custom-conditions:nth-last-child(5)"
-    //     )
-    //         .text()
-    //         .replace("Stock en bodega:", "")
-    //         .trim();
-    //     if (Number(prodAvailable) > 1) {
-    //         return "On Sale";
-    //     } else {
-    //         return "Sold out";
-    //     }
-    // }
+    async function getItemCode($) {
+        let code = $(
+            "div[class='summary entry-summary'] span.custom-conditions:nth-last-child(3)"
+        )
+            .text()
+            .replace("SKU:", "")
+            .trim();
+        return { code };
+    }
+    async function getAvailability($) {
+        let prodAvailable = $(
+            "div[class='summary entry-summary'] span.custom-conditions:nth-last-child(5)"
+        )
+            .text()
+            .replace("Stock en bodega:", "")
+            .trim();
+        if (Number(prodAvailable) > 1) {
+            return "On Sale";
+        } else {
+            return "Sold out";
+        }
+    }
     /********************************************************************************/
-    let itemOptionData = await getItemOptionData($);
+    // let itemOptionData = await getItemOptionData($);
     let brandAndTitle = await getBrandTitle($);
-    // let prices = await getPrices($);
-    // let images = await getImages($);
-    // let dsc = await getDescription($);
-    // let categ = await getCategory($);
-    // let itemCode = await getItemCode($);
-    // let availability = await getAvailability($);
+    let prices = await getPrices($);
+    let images = await getImages($);
+    let dsc = await getDescription($);
+    let categ = await getCategory($);
+    let itemCode = await getItemCode($);
+    let availability = await getAvailability($);
 
     /********************************************************************************/
     let item = new ItemModel();
     item.ItemUrl = request.url;
     item.BrandName = brandAndTitle.brand;
     item.ItemTitle = brandAndTitle.title;
-    // item.ItemRetailPrice = prices.retailPrice;
-    // item.ItemPrice = prices.salePrice;
+    item.ItemRetailPrice = prices.retailPrice;
+    item.ItemPrice = prices.salePrice;
     // item.ItemStatus = itemOptionData.itemStatus;
-    // item.StandardImage = images.standardImage;
-    // item.OtherImages = images.otherImages;
-    // item.ItemDescription = dsc.description;
-    // item.Category = categ.categories;
-    item.ItemOption = itemOptionData.itemOptions;
-    item.ItemOptionData = itemOptionData.itemOptionData;
-    // item.ItemCode = itemCode.code;
-    // item.ItemStatus = availability;
+    item.StandardImage = images.standardImage;
+    item.OtherImages = images.otherImages;
+    item.ItemDescription = dsc.description;
+    item.Category = categ.categories;
+    // item.ItemOption = itemOptionData.itemOptions;
+    // item.ItemOptionData = itemOptionData.itemOptionData;
+    item.ItemCode = itemCode.code;
+    item.ItemStatus = availability;
     // item.ItemModelNo = item.ItemCode
     Apify.pushData(item);
 };
